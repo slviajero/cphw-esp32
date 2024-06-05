@@ -194,6 +194,12 @@ void setup() {
   // pBLEScan->setWindow(449);
   // pBLEScan->setActiveScan(true);
   pBLEScan->start(5, false);
+  
+// prepare the blink
+#ifdef LED_BUILTIN
+  pinMode(LED_BUILTIN, OUTPUT);
+#endif
+  
 } // End of setup.
 
 
@@ -206,8 +212,30 @@ void loop() {
   if (doConnect == true) {
     if (connectToServer()) {
       Serial.println("We are now connected to the BLE Server.");
+
+// three brief blinks indicate a successful activation of the wheel
+#ifdef LED_BUILTIN
+      digitalWrite(LED_BUILTIN, HIGH); 
+      delay(200); 
+      digitalWrite(LED_BUILTIN, LOW);
+      delay(200); 
+      digitalWrite(LED_BUILTIN, HIGH); 
+      delay(200); 
+      digitalWrite(LED_BUILTIN, LOW);  
+      delay(200); 
+      digitalWrite(LED_BUILTIN, HIGH);
+      delay(200); 
+      digitalWrite(LED_BUILTIN, LOW);  
+#endif       
     } else {
       Serial.println("We have failed to connect to the server; there is nothin more we will do.");
+
+// one long blink indicates a connection error
+#ifdef LED_BUILTIN
+      digitalWrite(LED_BUILTIN, HIGH); 
+      delay(500); 
+      digitalWrite(LED_BUILTIN, LOW);
+#endif
     }
     doConnect = false;
   }
@@ -221,5 +249,5 @@ void loop() {
     BLEDevice::getScan()->start(0);  // this is just example to start scan after disconnect, most likely there is better way to do it in arduino
   }
   
-  delay(5000); // Delay a second between loops.
+  delay(2000); // Delay two second between loops.
 } // End of loop
